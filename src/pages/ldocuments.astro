@@ -1,0 +1,139 @@
+---
+import './src/styles/global.css'
+import Lheader from "../components/Lheader.astro";
+---
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome 6 Free (solid icons) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-a/NIWgdSTtr6WrxO…=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+</head>
+ <body data-startup-id="lead-metrics" class=" border border-gray-300 px-6 py-4">
+ <div class="mt-5 flex items-center justify-between border border-gray-300 rounded-xl px-6 py-4 shadow-sm bg-white">
+  <!-- Left side: Back arrow + startup info -->
+  <div class="flex items-center gap-4">
+    <!-- Back arrow -->
+    <button><a href="./leapx" class="text-2xl text-gray-700 hover:text-black">
+      &#8592;</a>
+    </button>
+
+    <!-- Title + subtitle -->
+    <div>
+      <h2 class="font-bold text-xl">Leadmetrics</h2>
+      <p class="text-sm text-gray-600">AI-Powered Workflow Automation</p>
+    </div>
+  </div>
+
+  <!-- Right side: Save Changes button -->
+  <button id="saveLdocuments" class="flex items-center gap-2 bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium py-2 px-4 rounded-md shadow">
+    <!-- Save icon -->
+    <svg class="w-4 h-4" fill="white" viewBox="0 0 24 24">
+      <path d="M17 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V7l-4-4zm0 16H5V5h11.17L19 7.83V19zm-5-2a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm-4-8h8v2H8V9z"/>
+    </svg>
+    Save Changes
+  </button>
+</div>
+<br>
+ <p class="text-sm">Dashboard > Leadmetrics > Documents</p>
+ <Lheader/>
+ <section class="bg-white mt-5 border border-gray-300 rounded-lg p-6 max-w-full mx-auto shadow-sm">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-semibold text-gray-800">Documents</h2>
+    <label for="uploadInput" class="bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium px-4 py-2 rounded-md shadow cursor-pointer">
+      + Upload Document
+    </label>
+    <input type="file" id="uploadInput" class="hidden" />
+  </div>
+  <table class="min-w-full text-left border">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="py-2 px-4 font-semibold">Document Type</th>
+        <th class="py-2 px-4 font-semibold">File Name</th>
+        <th class="py-2 px-4 font-semibold">Last Updated</th>
+        <th class="py-2 px-4 font-semibold">Size</th>
+        <th class="py-2 px-4 font-semibold">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="docTable" class="text-gray-700">
+    </tbody>
+  </table>
+</section>
+<div id="docToast" class="fixed bottom-6 right-6 bg-white text-gray-800 shadow-lg border border-gray-300 px-4 py-3 rounded-lg hidden z-50 transition-all duration-300">
+  Documents saved successfully!
+</div>
+<script>
+  const input = document.getElementById('uploadInput');
+  const table = document.getElementById('docTable');
+  const saveBtn = document.getElementById('saveLdocuments');
+  const toast = document.getElementById('docToast');
+
+  function getStartupKey() {
+  const id = document.body.dataset.startupId || 'default';
+  return `startupProfileData_${id}`;
+}
+
+  function createRow({ type, name, date, size, url }) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td class="py-2 px-4">${type}</td>
+      <td class="py-2 px-4 text-blue-700">${name}</td>
+      <td class="py-2 px-4">${date}</td>
+      <td class="py-2 px-4">${size}</td>
+      <td class="py-2 px-4 space-x-3 text-lg">
+        <a href="${url}" download="${name}" class="text-violet-600" title="Download"><i class="fas fa-download"></i></a>
+        <a href="${url}" target="_blank" class="text-black" title="View"><i class="fas fa-eye"></i></a>
+        <button onclick="this.closest('tr').remove()" class="text-red-600" title="Delete"><i class="fas fa-trash-alt"></i></button>
+      </td>
+    `;
+    table.appendChild(row);
+  }
+
+  input.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const base64 = e.target.result;
+      const fileSize = (file.size / (1024 * 1024)).toFixed(1) + "MB";
+      const dateStr = new Date().toLocaleDateString("en-US", {
+        year: "numeric", month: "long", day: "numeric"
+      });
+      const docType = file.name.split('.').pop().toUpperCase();
+      createRow({ type: docType, name: file.name, date: dateStr, size: fileSize, url: base64 });
+    };
+    reader.readAsDataURL(file);
+    input.value = "";
+  });
+
+  saveBtn?.addEventListener('click', () => {
+    const data = [];
+    [...table.rows].forEach(row => {
+      const cells = row.cells;
+      const name = cells[1]?.textContent;
+      const type = cells[0]?.textContent;
+      const date = cells[2]?.textContent;
+      const size = cells[3]?.textContent;
+      const url = cells[4]?.querySelector('a')?.getAttribute('href') || "";
+      data.push({ type, name, date, size, url });
+    });
+    localStorage.setItem(getStartupKey('Documents'), JSON.stringify(data));
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 2000);
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = JSON.parse(localStorage.getItem(getStartupKey('Documents')) || '[]');
+    saved.forEach(doc => createRow(doc));
+  });
+</script>
+</body>
+</html>

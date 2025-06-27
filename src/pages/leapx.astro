@@ -1,0 +1,265 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.svelte';
+---
+<Layout title="LeapX Dashboard">
+    <div class="mt-5 border border-gray-300" >
+  <Navbar/>
+  </div>
+  <!-- Add Startup Modal -->
+  <div id="startupModal" class="fixed inset-0 bg-black/50 hidden justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-lg w-full max-w-md">
+      <h2 class="text-xl font-semibold mb-4">Add New Startup</h2>
+      <form id="startupForm" class="space-y-4">
+        <input type="text" id="startupName" class="w-full border px-3 py-2 rounded" placeholder="Startup Name" required>
+        <input type="text" id="startupTagline" class="w-full border px-3 py-2 rounded" placeholder="Tagline" required>
+        <input type="text" id="startupDomain" class="w-full border px-3 py-2 rounded" placeholder="Domain (e.g., AI, Legal Tech)" required>
+        <input type="text" id="startupId" class="w-full border px-3 py-2 rounded" placeholder="Unique ID (e.g., heka-medicals)" required>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" id="cancelModal" class="border px-4 py-2 rounded">Cancel</button>
+          <button type="submit" class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <section class="bg-[#7C6CFF] text-white py-10 px-6 shadow-lg ">
+    <div class="max-w-screen-xl mx-auto r">
+      <h1 class="text-3xl font-bold">LeapX Accelerator Program Dashboard</h1>
+      <p class="text-md mt-2 mb-6">Track the progress of all 11 startups at a glance</p>
+      <a href="#startups"
+         class="inline-block bg-white text-violet-600 font-medium px-6 py-2 rounded hover:bg-violet-100">
+        View All Startups
+      </a>
+    </div>
+  </section>
+  <div class="flex gap-4 p-4">
+    <div class="flex items-center gap-4 w-1/4 p-4 border border-gray-300 rounded-xl shadow-md bg-white">
+    <span class="text-2xl">🚀</span>
+    <div>
+      <h2 class="text-lg font-semibold">11</h2>
+      <p class="text-sm text-gray-600">Total Startups</p>
+    </div>
+  </div>
+   <div class="flex items-center gap-4 w-1/4 p-4 border border-gray-300 rounded-xl shadow-md bg-white">
+    <span class="text-2xl">📈</span>
+    <div>
+      <h2 class="text-lg font-semibold">8</h2>
+      <p class="text-sm text-gray-600">Updates This Week</p>
+    </div>
+  </div>
+   <div class="flex items-center gap-4 w-1/4 p-4 border border-gray-300 rounded-xl shadow-md bg-white">
+    <span class="text-2xl">📅</span>
+    <div>
+      <h2 class="text-lg font-semibold">5</h2>
+      <p class="text-sm text-gray-600">Meetings Scheduled</p>
+    </div>
+  </div>
+    <div class="flex items-center gap-4 w-1/4 p-4 border border-gray-300 rounded-xl shadow-md bg-white">
+    <span class="text-2xl">🎖️</span>
+    <div>
+      <h2 class="text-lg font-semibold">23</h2>
+      <p class="text-sm text-gray-600">Milestones Completed</p>
+    </div>
+  </div>
+  </div> 
+ <section id="startups">
+ <div class="flex gap-6 p-6">
+  <!-- Startup Overview Table -->
+  <div class="bg-white rounded-xl shadow-md p-6 w-3/4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold">Startup Overview</h2>
+      <div class="flex items-center gap-2">
+     <!-- Search box -->
+       <!-- ⬇️ Search bar (place inside your Startup Overview header) -->
+<div class="relative">
+  
+  <!-- text box -->
+  <input
+    id="startupSearch"
+    type="text"
+    placeholder="Search startups..."
+    class="pl-10 pr-10 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-violet-500"
+  />
+<script>
+  const searchInput = document.getElementById('startupSearch');
+  const searchBtn   = document.getElementById('searchBtn');
+  const rows        = document.querySelectorAll('#startupTable tbody tr');
+
+  function filterRows() {
+    const term = searchInput.value.trim().toLowerCase();
+    rows.forEach(row => {
+      // checks only the first cell (startup name); extend as you like
+      const name = row.cells[0].textContent.toLowerCase();
+      row.style.display = name.includes(term) ? '' : 'none';
+    });
+  }
+
+  // 🔍 click
+  searchBtn.addEventListener('click', filterRows);
+
+  // ⏎ Enter key inside the input
+  searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') filterRows();
+  });
+</script>
+
+  <!-- clickable icon -->
+  <button
+    id="searchBtn"
+    class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-violet-600 focus:outline-none"
+    aria-label="Search"
+  >
+    <!-- a tiny SVG magnifier – feel free to swap in Heroicons -->
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+         viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21 21l-4.35-4.35m0 0A7 7 0 1 0 10.3 10.3a7 7 0 0 0 6.35 6.35z"/>
+    </svg>
+  </button>
+  
+</div>
+
+
+        <!-- Filter dropdown -->
+       <!-- ⬇️ Filter dropdown -->
+<div class="relative" id="sectorFilter">
+  <!-- Trigger button -->
+  <button
+    id="sectorBtn"
+    class="flex items-center gap-1 px-4 py-2 border rounded-md text-sm text-gray-700 hover:bg-gray-100 focus:ring-2 focus:ring-violet-500"
+    aria-haspopup="true"
+    aria-expanded="false"
+  >
+    <span id="sectorLabel">All Sectors</span>
+    <svg class="w-4 h-4 transition-transform duration-200" id="sectorIcon"
+      fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+  
+  <!-- Menu -->
+  <ul
+    id="sectorMenu"
+    class="absolute right-0 z-10 mt-1 w-40 bg-white border border-gray-300 rounded-md shadow-lg text-sm text-gray-700
+           divide-y divide-gray-100 hidden"
+    role="menu"
+  >
+    <!-- Each li has a data-value for JS -->
+    <li class="px-4 py-2 cursor-pointer hover:bg-gray-50" data-value="All Sectors">All Sectors</li>
+    <li class="px-4 py-2 cursor-pointer hover:bg-gray-50" data-value="Marketing Tech">Marketing Tech</li>
+    <li class="px-4 py-2 cursor-pointer hover:bg-gray-50" data-value="HealthTech">HealthTech</li>
+    <li class="px-4 py-2 cursor-pointer hover:bg-gray-50" data-value="Legal Tech">Legal Tech</li>
+    <li class="px-4 py-2 cursor-pointer hover:bg-gray-50" data-value="Gaming Tech">Gaming Tech</li>
+    <li class="px-4 py-2 cursor-pointer hover:bg-gray-50" data-value="Sustainable Product">Sustainable Product</li>
+  </ul>
+</div>
+
+<!-- ⬇️ Tiny JS (anywhere after the dropdown, e.g. before </body>) -->
+<script>
+  const btn   = document.getElementById('sectorBtn');
+  const menu  = document.getElementById('sectorMenu');
+  const icon  = document.getElementById('sectorIcon');
+  const label = document.getElementById('sectorLabel');
+
+  // open / close
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    menu.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', menu.classList.contains('hidden') ? 'false' : 'true');
+    icon.classList.toggle('rotate-180');
+  });
+
+  // choose a sector
+  menu.addEventListener('click', e => {
+    if (e.target.matches('[data-value]')) {
+      label.textContent = e.target.dataset.value;   // update button text
+      menu.classList.add('hidden');                 // close menu
+      btn.setAttribute('aria-expanded', 'false');
+      icon.classList.remove('rotate-180');
+      // 👉 here you would optionally trigger filtering logic for your table
+    }
+  });
+
+  // close when clicking outside
+  window.addEventListener('click', () => {
+    if (!menu.classList.contains('hidden')) {
+      menu.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      icon.classList.remove('rotate-180');
+    }
+  });
+</script>
+
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table id="startupTable" class="min-w-full text-sm text-left border-collapse">
+        <thead class="text-gray-600 border-b">
+          <tr>
+            <th class="p-2">STARTUP NAME</th>
+            <th class="p-2">SECTOR</th>
+            <th class="p-2">LAST UPDATE</th>
+            <th class="p-2">STATUS</th>
+            <th class="p-2">ACTION</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-700">
+          <tr class="border-b hover:bg-gray-50">
+            <td class="p-2 font-semibold">Leadmetrics</td>
+            <td class="p-2">Marketing Tech</td>
+            <td class="p-2">June 15, 2025</td>
+            <td class="p-2">On Track</td>
+            <td><a href="./lprofile" class="p-2 text-violet-600 hover:underline font-medium cursor-pointer">View Profile</a></td>
+          </tr>
+          <tr class="border-b hover:bg-gray-50">
+            <td class="p-2 font-semibold">Heka Medicals</td>
+            <td class="p-2">HealthTech</td>
+            <td class="p-2">June 15, 2025</td>
+            <td class="p-2">Ahead</td>
+            <td ><a href="./hmprofile"class="p-2 text-violet-600 hover:underline font-medium cursor-pointer" >View Profile</a></td>
+          </tr>
+          <tr class="border-b hover:bg-gray-50">
+            <td class="p-2 font-semibold">Erayaha</td>
+            <td class="p-2">Legal Tech</td>
+            <td class="p-2">June 15, 2025</td>
+            <td class="p-2">At Risk</td>
+            <td> <a href="./eprofile" class="p-2 text-violet-600 hover:underline font-medium cursor-pointer">View Profile</a></td>
+          </tr>
+          <tr class="border-b hover:bg-gray-50">
+            <td class="p-2 font-semibold">Dreamloop</td>
+            <td class="p-2">Gaming Tech</td>
+            <td class="p-2">June 15, 2025</td>
+            <td class="p-2">On Track</td>
+            <td><a href="./dprofile" class="p-2 text-violet-600 hover:underline font-medium cursor-pointer">View Profile</a></td>
+          </tr>
+          <tr class="border-b hover:bg-gray-50">
+            <td class="p-2 font-semibold">Bioaryvedic</td>
+            <td class="p-2">Sustainable Product</td>
+            <td class="p-2">June 15, 2025</td>
+            <td class="p-2">Ahead</td>
+            <td> <a href="./bprofile" class="p-2 text-violet-600 hover:underline font-medium cursor-pointer">View Profile</a></td>
+          </tr>
+          <tr class="border-b hover:bg-gray-50">
+            <td class="p-2 font-semibold">Wizard Flair</td>
+            <td class="p-2">MarketingTech</td>
+            <td class="p-2">June 15, 2025</td>
+            <td class="p-2">On Track</td>
+            <td> <a href="./wprofile" class="p-2 text-violet-600 hover:underline font-medium cursor-pointer">View Profile</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Activity Sidebar -->
+  <div class="w-1/4 bg-white rounded-xl shadow-md p-4">
+    <h2 class="text-lg font-semibold mb-2">Recent Activity</h2>
+    <!-- You can add content here later -->
+  </div>
+</div>
+  </section>  
+
+</Layout>

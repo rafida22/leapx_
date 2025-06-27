@@ -1,0 +1,35 @@
+---
+// src/components/NavBar.astro
+const { pathname } = Astro.url;
+
+/* Copy‑paste your links once here */
+const links = [
+  { label: 'Profile',        href: '/wprofile',        icon: 'fa-user' },
+  { label: 'Action Plan',    href: '/wactionplan',    icon: 'fa-list-ul' },
+  { label: 'Mentorship',     href: '/wmentorship',     icon: 'fa-comments' },
+  { label: 'Internal Notes', href: '/winotes', icon: 'fa-note-sticky' },
+  { label: 'Documents',      href: '/wdocuments',      icon: 'fa-file-lines' },
+  { label: 'Meetings',       href: '/wmeetings',       icon: 'fa-calendar-days' },
+];
+---
+
+<!-- ✔︎ keeps your exact wrappers and classes -->
+<div class="mt-5 flex items-center border border-gray-300 font-medium px-6 py-4 shadow-sm bg-white">
+  <div class="flex space-x-15 font-medium text-lg">
+    {links.map(link => {
+      const active = pathname === link.href;        // highlight the current page
+      return (
+        <a
+          href={link.href}
+          aria-current={active ? 'page' : undefined}
+          class={`flex items-center gap-2 ${
+            active ? 'text-violet-500' : 'text-black hover:text-violet-500'
+          }`}
+        >
+          <i class={`fa-solid ${link.icon} fa-lg`}></i>
+          <span>{link.label}</span>
+        </a>
+      );
+    })}
+  </div>
+</div>

@@ -1,0 +1,161 @@
+---
+import './src/styles/global.css'
+import Wheader from "../components/Wheader.astro";
+---
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome 6 Free (solid icons) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-a/NIWgdSTtr6WrxO…=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+</head>
+ <body data-startup-id="wizard-flair" class=" border border-gray-300 px-6 py-4">
+ <div class="mt-5 flex items-center justify-between border border-gray-300 rounded-xl px-6 py-4 shadow-sm bg-white">
+  <!-- Left side: Back arrow + startup info -->
+  <div class="flex items-center gap-4">
+    <!-- Back arrow -->
+    <button><a href="./leapx" class="text-2xl text-gray-700 hover:text-black">
+      &#8592;</a>
+    </button>
+
+    <!-- Title + subtitle -->
+    <div>
+      <h2 class="font-bold text-xl">Wizard Flair</h2>
+      <p class="text-sm text-gray-600">AI-Powered Workflow Automation</p>
+    </div>
+  </div>
+
+  <!-- Right side: Save Changes button -->
+  <button id="saveLbtn"class="flex items-center gap-2 bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium py-2 px-4 rounded-md shadow">
+    <!-- Save icon -->
+    <svg class="w-4 h-4" fill="white" viewBox="0 0 24 24">
+      <path d="M17 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V7l-4-4zm0 16H5V5h11.17L19 7.83V19zm-5-2a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm-4-8h8v2H8V9z"/>
+    </svg>
+    Save Changes
+  </button>
+</div>
+<br>
+ <p class="text-sm">Dashboard > Wizard Flair > Profile</p>
+ <Wheader/>
+  <div class="[&_div]:border-gray-300 [&_input]:border [&_input]:border-gray-300">
+  <div class="mt-5 border border-gray-300 p-6 bg-white">
+    <h2 class="text-lg font-medium mb-4">Product & Innovation</h2>
+    <div class="border border-gray-300 p-4 rounded-md">
+      <p class="text-base">Develops an AI-powered automation platform</p>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <div class="mt-5 border border-gray-300 p-4 rounded-md">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Founder Details</h2>
+        <button id="addFounder" class="text-violet-600 hover:underline text-sm">+ Add Founder</button>
+      </div>
+      <div id="founderGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input type="text" placeholder="Name" class="border border-gray-300 p-2 rounded w-full" />
+        <input type="text" placeholder="Founder" class="border border-gray-300 p-2 rounded w-full" />
+        <input type="text" placeholder="Experience" class="border border-gray-300 p-2 rounded w-full" />
+      </div>
+    </div>
+
+    <div class="border border-gray-300 p-4 rounded-md">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Current Status</h2>
+        <button id="addStatus" class="text-violet-600 hover:underline text-sm">+ Add Status</button>
+      </div>
+      <div id="statusGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" placeholder="Date" class="border border-gray-300 p-2 rounded w-full" />
+        <input type="text" placeholder="Successfully completed Series A funding" class="border border-gray-300 p-2 rounded w-full" />
+      </div>
+    </div>
+
+    <div class="border border-gray-300 p-4 rounded-md">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Current Clients</h2>
+        <button id="addClient" class="text-violet-600 hover:underline text-sm">+ Add Clients</button>
+      </div>
+      <div id="clientGrid" class="grid grid-cols-1 md:grid-cols-1 gap-4">
+        <input type="text" placeholder="Client" class="border border-gray-300 p-2 rounded w-full" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const makeInput = (ph) => {
+  const i = document.createElement('input');
+  i.type = 'text';
+  i.placeholder = ph || '';
+  i.className = 'border border-gray-300 p-2 rounded w-full';
+  return i;
+};
+function getStartupKey(name) {
+  const id = document.body.dataset.startupId || 'default';
+  return `${name}_${id}`;
+}
+
+document.getElementById('addFounder').addEventListener('click', () => {
+  const g = document.getElementById('founderGrid');
+  g.append(makeInput('Name'), makeInput('Founder'), makeInput('Experience'));
+});
+
+document.getElementById('addStatus').addEventListener('click', () => {
+  const g = document.getElementById('statusGrid');
+  g.append(makeInput('Date'), makeInput('Status or Milestone'));
+});
+
+document.getElementById('addClient').addEventListener('click', () => {
+  const g = document.getElementById('clientGrid');
+  g.append(makeInput('Client'));
+});
+
+document.getElementById('saveLbtn').addEventListener('click', () => {
+  const getInputValues = (id) => Array.from(document.querySelectorAll(`#${id} input`)).map(i => i.value.trim());
+
+  const data = {
+    founders: getInputValues('founderGrid'),
+    status: getInputValues('statusGrid'),
+    clients: getInputValues('clientGrid')
+  };
+
+  localStorage.setItem(getStartupKey(), JSON.stringify(data));
+  const toast = document.getElementById('toast');
+  toast.classList.remove('hidden');
+  toast.style.opacity = '1';
+  setTimeout(() => toast.style.opacity = '0', 2000);
+  setTimeout(() => toast.classList.add('hidden'), 2500);
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const data = JSON.parse(localStorage.getItem(getStartupKey()) || '{}');
+
+  const populateInputs = (gridId, key, placeholders, count) => {
+    const container = document.getElementById(gridId);
+    container.innerHTML = '';
+    const values = data[key] || [];
+    for (let i = 0; i < values.length; i += count) {
+      for (let j = 0; j < count; j++) {
+        const val = values[i + j] || '';
+        const input = makeInput(placeholders[j]);
+        input.value = val;
+        container.appendChild(input);
+      }
+    }
+  };
+
+  populateInputs('founderGrid', 'founders', ['Name', 'Founder', 'Experience'], 3);
+  populateInputs('statusGrid', 'status', ['Date', 'Status or Milestone'], 2);
+  populateInputs('clientGrid', 'clients', ['Client'], 1);
+});
+
+</script>
+
+</body>
+</html>

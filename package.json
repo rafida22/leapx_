@@ -1,0 +1,19 @@
+{
+  "name": "ffc-leapx",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "^7.1.0",
+    "@tailwindcss/vite": "^4.1.8",
+    "astro": "^5.9.2",
+    "svelte": "^5.33.18",
+    "tailwindcss": "^4.1.8",
+    "typescript": "^5.8.3"
+  }
+}
